@@ -1,0 +1,18 @@
+[submodule "midfix4agb"]
+	path = midfix4agb
+	url = https://github.com/ipatix/midfix4agb
+[submodule "csmidi"]
+	path = csmidi
+	url = https://github.com/ipatix/csmidi
+[submodule "wav2agb"]
+	path = wav2agb
+	url = https://github.com/ipatix/wav2agb
+[submodule "bin2asm"]
+	path = bin2asm
+	url = https://github.com/ipatix/bin2asm
+[submodule "string2agb"]
+	path = string2agb
+	url = https://github.com/SBird1337/string2agb
+[submodule "preproc"]
+	path = preproc
+	url = https://github.com/SBird1337/preproc
