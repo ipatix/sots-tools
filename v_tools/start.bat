@@ -1,0 +1,2 @@
+python pymap.py
+pause
