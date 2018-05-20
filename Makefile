@@ -1,4 +1,4 @@
-.PHONY: all bin2asm csmidi midfix4agb preproc wav2agb install
+.PHONY: all preproc wav2agb midi2agb install
 
 all: preproc wav2agb midi2agb
 	@echo "*** Building Succeeded ***"
