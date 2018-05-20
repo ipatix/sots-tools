@@ -1,9 +1,3 @@
-[submodule "midfix4agb"]
-	path = midfix4agb
-	url = https://github.com/ipatix/midfix4agb
-[submodule "csmidi"]
-	path = csmidi
-	url = https://github.com/ipatix/csmidi
 [submodule "wav2agb"]
 	path = wav2agb
 	url = https://github.com/ipatix/wav2agb
