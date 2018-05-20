@@ -3,7 +3,11 @@
 all: preproc wav2agb midi2agb
 	@echo "*** Building Succeeded ***"
 
-preproc wav2agb midi2agb:
+midi2agb:
+	git submodule update --recursive --init
+	make -C $@
+
+preproc wav2agb:
 	# tools to be built with regular makefiles
 	make -C $@
 
