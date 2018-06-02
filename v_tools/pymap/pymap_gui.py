@@ -219,8 +219,19 @@ class Pymap_gui(tkinter.Frame):
             #self.selected_event_by_drag.y = y
             #self._refresh_event(self.event_type, self.event_id)
             update_info(e)
+
+        def event_map_canvas_b2_press(e):
+            """ Button 1 double click (follow warp if possible)"""
+            if not self._can_draw(): return
+            event_map_canvas_b1_press(e) #Select the event regulary
+            print("double", self.event_type)
+            if self.event_type == "Warp":
+                self.open_map(self.selected_event_by_drag.target_bank, self.selected_event_by_drag.target_map)
+            
+
         self.event_map_widget_canvas.bind("<B1-Motion>", event_map_canvas_b1_motion)
         self.event_map_widget_canvas.bind("<Motion>", update_info)
+        self.event_map_widget_canvas.bind("<Button-2>", event_map_canvas_b2_press)
 
         #Setup editing widget at border
         self.event_edit_widget = ttk.Labelframe(self.event_frame, text="Properties")
@@ -316,7 +327,7 @@ class Pymap_gui(tkinter.Frame):
             else:
                 event_present = True
                 self.event_edit_widget_id_spinbox = tkinterx.Spinbox(self.event_edit_widget, from_=0, to=len(self.map.signposts) - 1, default=id, command=lambda: self._select_event("Sign", int(self.event_edit_widget_id_spinbox.get())))
-                entries = _build_entries(["Level", "Type", "Field6", "Field7", "Item", "Hidden and Flags", "Count"], 4)
+                entries = _build_entries(["Level", "Type", "Field6", "Field7", "Item", "Hidden Id", "Flags, Chunk, Count"], 4)
         elif self.event_type == "None": return
         else: 
             raise Exception("Unkown event type selected: " + self.event_type)
@@ -429,7 +440,7 @@ class Pymap_gui(tkinter.Frame):
             _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Script" : "script"})
         elif stype == "SignItem":
             event = self.map.signposts[id]
-            _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden and Flags" : "hidden", "Count" : "count"})
+            _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden Id" : "hidden", "Flags, Chunk, Count" : "count"})
         else: raise Exception("Unkown event type " + stype)
 
     def _event_apply_changes(self, stype, id, supress_warnings=False):
@@ -450,7 +461,7 @@ class Pymap_gui(tkinter.Frame):
             assocs = {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Script" : "script"}
             event = self.map.signposts[id]
         elif stype == "SignItem":
-            assocs =  {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden and Flags" : "hidden", "Count" : "count"}
+            assocs =  {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden Id" : "hidden", "Flags, Chunk, Count" : "count"}
             event = self.map.signposts[id]
         else: raise Exception("Unknown specified event type " + stype)
         diffs = {}
@@ -1250,10 +1261,12 @@ class Pymap_gui(tkinter.Frame):
         dialog = tkinter.Toplevel(self.root)
         self.header_dialog = dialog
         dialog.wm_title("Edit mapheader of map " + self.map.key)
-        dialog.attributes("-toolwindow", 1)
+        #dialog.attributes("-toolwindow", 1)
         entries = [("Levelscript header", "levelscript_header", None), ("Music", "music", constants.music),
         ("Flash type", "flash_type", constants.flash_types), ("Weather", "weather", constants.map_weather), ("Map type", "type", constants.map_types),
-        ("Field18", "field_18", None), ("Show name", "show_name", constants.map_show_name), ("Field1A", "field_1a", None) , ("Battle style", "battle_style", constants.battle_types)]
+        ("Field18", "field_18", None), ("Show name", "show_name", constants.map_show_name), ("Field1A", "field_1a", None) , ("Battle style", "battle_style", constants.battle_types),
+        ("Footer id", "id", None)
+        ]
         dialog.dropdowns = [None for _ in entries]
         for i in range(len(entries)):
             show, name, consts = entries[i]
@@ -1266,7 +1279,7 @@ class Pymap_gui(tkinter.Frame):
             except: value = str(value)
             entry.insert(0, value)
             entries[i] = show, name, entry
-                
+                            
 
         def close():
             #self.root.deiconify()
@@ -1298,6 +1311,16 @@ class Pymap_gui(tkinter.Frame):
                 except: pass
                 value_old = self.map.__getattribute__(name)
                 if value != value_old: diffs[name] = value, value_old
+            if "id" in diffs:
+                #Check if the new footer id is already used (if another map uses this footer id)
+                footer_id, _ = diffs["id"]
+                id_usage = self.proj.get_footer_usage(footer_id)
+                print(diffs["id"], id_usage)
+                if self.map.symbol in id_usage: id_usage.remove(self.map.symbol)
+                if len(id_usage):
+                    if not tkinter.messagebox.askyesno(title="Footer id already used", message="The footer id " + str(footer_id) + " is already used by the following map(s) (listed by symbol) "+ str(id_usage) + ". A possible unused id would be " + hex(self.proj.get_smallest_availible_foooter_id()) + ". Do you want to continue?", default="no"): return
+
+
             if len(diffs): self.action(Action_header_edit(self, diffs, update))
 
         tkinter.Button(dialog, text="Apply", command=apply_changes).grid(row=len(entries), column=0, sticky=tkinter.NW)
@@ -1315,7 +1338,7 @@ class Pymap_gui(tkinter.Frame):
         dialog = tkinter.Toplevel(self.root)
         self.connection_dialog = dialog
         dialog.wm_title("Edit connections of map " + self.map.key)
-        dialog.attributes("-toolwindow", 1)
+        #dialog.attributes("-toolwindow", 1)
         dialog.current_connection_num = None
 
         
@@ -1508,7 +1531,7 @@ class Pymap_gui(tkinter.Frame):
         self.footer_dialog = dialog
         #self.root.withdraw()
         dialog.wm_title("Edit mapfooter of map " + self.map.key)
-        dialog.attributes("-toolwindow", 1)
+        #dialog.attributes("-toolwindow", 1)
         tkinter.Label(dialog, text="Primary tileset:").grid(row=0, column=0, sticky=tkinter.NW)
         tkinter.Label(dialog, text="Secondary tileset:").grid(row=1, column=0, sticky=tkinter.NW)
         entry_tsp, entry_tss = tkinterx.Combobox(dialog, values=self.proj.get_tileset_paths()), tkinterx.Combobox(dialog, values=self.proj.get_tileset_paths())
@@ -1825,10 +1848,10 @@ class Action_footer_edit(Action):
         #Tss and tsp
         if "tsp" in self.diffs:
             tsp_new, tsp_old = self.diffs["tsp"]
-            if len(tsp_new): self.root.map.footer.tsp = self.root.proj.get_tileset(tsp_new)
+            if len(tsp_new): self.root.map.footer.tsp_sym = tsp_new
         if "tss" in self.diffs:
             tss_new, tss_old = self.diffs["tss"]
-            if len(tss_new): self.root.map.footer.tss = self.root.proj.get_tileset(tss_new)
+            if len(tss_new): self.root.map.footer.tss_sym = tss_new
         self.root._refresh()
         self.footer_dialog_update()
 
@@ -1848,10 +1871,10 @@ class Action_footer_edit(Action):
         #Tss and tsp
         if "tsp" in self.diffs:
             tsp_new, tsp_old = self.diffs["tsp"]
-            if len(tsp_old): self.root.map.footer.tsp = self.root.proj.get_tileset(tsp_old)
+            if len(tsp_old): self.root.map.footer.tsp_sym = tsp_old
         if "tss" in self.diffs:
             tss_new, tss_old = self.diffs["tss"]
-            if len(tss_old): self.root.map.footer.tss = self.root.proj.get_tileset(tss_old)
+            if len(tss_old): self.root.map.footer.tss_sym = tss_old
         self.root._refresh()
         self.footer_dialog_update()
 

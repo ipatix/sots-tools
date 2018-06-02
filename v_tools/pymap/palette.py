@@ -18,7 +18,7 @@ def from_file(path):
     elif extension.lower() == ".png":
         #Extract palette from 4bpp indexed png
         img = Image.open(fd)
-        colors = bytes(img.palette.palette)
+        colors = list(bytes(img.palette.palette))
         fd.close()
         return colors
     else:

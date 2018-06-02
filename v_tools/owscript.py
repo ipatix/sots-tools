@@ -22,24 +22,24 @@ class CommandTrainerbattleFactory:
     
     def make_command_by_type(self, type):
         if type in (0,5):
-            return Command("trainerbattle", [Param("kind", BYTE), Param("trainer", HWORD),
+            return Command("trainerbattlestd", [Param("kind", BYTE), Param("trainer", HWORD),
             Param("people", HWORD), Param("str_challange", STRING), Param("str_defeat", STRING)])
         elif type in (1,2):
-            return Command("trainerbattle", [Param("kind", BYTE), Param("trainer", HWORD),
+            return Command("trainerbattlecont", [Param("kind", BYTE), Param("trainer", HWORD),
             Param("people", HWORD), Param("str_challange", STRING), Param("str_defeat", STRING),
             Param("continuation", SCRIPT_REFERENCE)], ends_section = True)
         elif type in (4,7):
-            return Command("trainerbattle", [Param("kind", BYTE), Param("trainer", HWORD),
+            return Command("trainerbattledouble", [Param("kind", BYTE), Param("trainer", HWORD),
             Param("people", HWORD), Param("str_challange", STRING), Param("str_defeat", STRING),
             Param("continuation_one_poke", SCRIPT_REFERENCE)])
         elif type == 3:
-            return Command("trainerbattle", [Param("kind", BYTE), Param("trainer", HWORD),
+            return Command("trainerbattlenotinterrupting", [Param("kind", BYTE), Param("trainer", HWORD),
             Param("people", HWORD), Param("str_defeat", STRING)])
         elif type == 9:
-            return Command("trainerbattle", [Param("kind", BYTE), Param("trainer", HWORD),
+            return Command("trainerbattlelosable", [Param("kind", BYTE), Param("trainer", HWORD),
             Param("people", HWORD), Param("str_defeat", STRING), Param("str_loss", STRING)])
         elif type in (6,8):
-            return Command("trainerbattle", [Param("kind", BYTE), Param("trainer", HWORD),
+            return Command("trainerbattle6", [Param("kind", BYTE), Param("trainer", HWORD),
             Param("people", HWORD), Param("str_challange", STRING), Param("str_defeat", STRING),
             Param("str_var1", WORD), Param("continuation", SCRIPT_REFERENCE)])
 
@@ -66,6 +66,7 @@ class Command:
         self.params = params
         self.callback = callback
         self.ends_section = ends_section
+        self.macro_export = None
 
     def size(self, rom, offset):
         size = 1
@@ -126,10 +127,12 @@ class Owscript_Exploration_tree:
         self.explored_offsets = {} #No offset must be encountered twice (prevent infinite loops)
         self.assemblies = []
         self.strings = [] #Tuple symbol, content, filename
+        self.pedantic = False
     
-    def explore(self, offset, verbose=verbose, recursive=True):
+    def explore(self, offset, verbose=verbose, recursive=True, pedantic=False):
         """ Explores an offset of a script tree """
         self.offsets.append(offset)
+        self.pedantic = pedantic
         while len(self.offsets):
             #Explore this offset
             offset = self.offsets.pop()
@@ -151,7 +154,7 @@ class Owscript_Exploration_tree:
                     #cmd = owscript_cmds[self.rom.u8(offset)]
                     try: assembly += cmd.export(self, self.rom, offset) + "\n"
                     except Exception as e:
-                        print("Error at export of command", cmd)
+                        print("Error at export of command", cmd.name)
                         raise e
                     #cmd.callback(self, self.rom, offset)
                     if cmd.get_ends_section(self.rom, offset): break #Only if the command ends a section
@@ -232,23 +235,31 @@ def explore_string_reference(tree, rom, offset):
         tree.explored_offsets[offset] = TYPE_STRING
     return label
 
+def isvar(val):
+    """ Checks if a value corresponds to a variable """
+    if val in range(0x8000, 0x8010): return True
+    if val in range(0x4000, 0x6000): return True
+    return False
+
 #Parameter types, can be extended and stores callbacks to exploration funcs that yield the exported assembly string and also proceed exporting
 BYTE = ParamType(1, lambda tree, rom, offset : str(hex(rom.u8(offset))))
 HWORD = ParamType(2, lambda tree, rom, offset : str(hex(rom.u16(offset))))
 WORD =  ParamType(4, lambda tree, rom, offset : str(hex(rom.u32(offset))))
 SCRIPT_REFERENCE = ParamType(4, explore_script_reference)
-ITEM = ParamType(2, lambda tree, rom, offset : constants.item(rom.u16(offset)))
-FLAG = ParamType(2, lambda tree, rom, offset : constants.flag(rom.u16(offset)))
+ITEM = ParamType(2, lambda tree, rom, offset: constants.item(rom.u16(offset), pedantic=tree.pedantic) if not isvar(rom.u16(offset)) else constants.var(rom.u16(offset), pedantic=tree.pedantic))
+FLAG = ParamType(2, lambda tree, rom, offset : constants.flag(rom.u16(offset), pedantic=tree.pedantic))
 MOVEMENT_LIST = ParamType(4, explore_movement_list)
 STRING = ParamType(4, explore_string_reference)
-POKEMON = ParamType(2, lambda tree, rom, offset : constants.species(rom.u16(offset)))
-ATTACK = ParamType(2, lambda tree, rom, offset : constants.attack(rom.u16(offset)))
+POKEMON = ParamType(2, lambda tree, rom, offset : constants.species(rom.u16(offset), pedantic=tree.pedantic) if not isvar(rom.u16(offset)) else constants.var(rom.u16(offset), pedantic=tree.pedantic))
+ATTACK = ParamType(2, lambda tree, rom, offset : constants.attack(rom.u16(offset), pedantic=tree.pedantic))
 MART = ParamType(4, explore_mart_list)
-FLAG = ParamType(2, lambda tree, rom, offset : constants._dict_get(constants.flag_table, rom.u16(offset)))
-VAR = ParamType(2, lambda tree, rom, offset : constants._dict_get(constants.var_table, rom.u16(offset)))
-ORD = ParamType(1, lambda tree, rom, offset : constants._dict_get(constants.ords, rom.u8(offset)))
-STD = ParamType(1, lambda tree, rom, offset : constants._dict_get(constants.stds, rom.u8(offset)))
-MUSIC = ParamType(2, lambda tree, rom, offset : constants._dict_get(constants.music, rom.u16(offset)))
+VAR = ParamType(2, lambda tree, rom, offset : constants.var(rom.u16(offset), pedantic=tree.pedantic))
+ORD = ParamType(1, lambda tree, rom, offset : constants._dict_get(constants.ords, rom.u8(offset), pedantic=tree.pedantic))
+STD = ParamType(1, lambda tree, rom, offset : constants._dict_get(constants.stds, rom.u8(offset), pedantic=tree.pedantic))
+MUSIC = ParamType(2, lambda tree, rom, offset : constants._dict_get(constants.music, rom.u16(offset), pedantic=tree.pedantic))
+
+
+
 
 owscript_cmds = [
     #0x00
@@ -258,8 +269,8 @@ owscript_cmds = [
     Command("return", [], ends_section = True),
     Command("call", [Param("subscript", SCRIPT_REFERENCE)]),
     Command("goto", [Param("script", SCRIPT_REFERENCE)], ends_section = True),
-    Command("gotoif", [Param("condition", ORD), Param("script", SCRIPT_REFERENCE)]),
-    Command("callif", [Param("condition", ORD), Param("subscript", SCRIPT_REFERENCE)]),
+    Command("gotoif", [Param("condition", ORD), Param("subscript", SCRIPT_REFERENCE)]),
+    Command("callif", [Param("condition", ORD), Param("script", SCRIPT_REFERENCE)]),
     #0x08
     Command("gotostd", [Param("std", STD)], ends_section = True),
     Command("callstd", [Param("std", STD)]),
@@ -281,7 +292,7 @@ owscript_cmds = [
     #0x18
    Command("subvar", [Param("var", VAR), Param("value", HWORD)]),
    Command("copyvar", [Param("dst", VAR), Param("src", VAR)]),
-   Command("copyvarifnotzero", [Param("dst", VAR), Param("src", VAR)]),
+   Command("copyvarifnotzero", [Param("dst", VAR), Param("src", ITEM)]),
    Command("comparebanks", [Param("bank1", HWORD), Param("bank2", HWORD)]),
    Command("comparebanktobyte", [Param("bank", BYTE), Param("value", BYTE)]),
    Command("comparebanktofarbyte", [Param("bank", BYTE), Param("offset", WORD)]),
@@ -424,7 +435,7 @@ owscript_cmds = [
    Command("cmd96", [Param("param1", HWORD)]),
    Command("fadescreen", [Param("effect", BYTE)]),
    #0x98
-   Command("fadescreendelay", [Param("effect", BYTE), Param("speed", BYTE)]),
+   Command("fadescreenspeed", [Param("effect", BYTE), Param("speed", BYTE)]),
    Command("darken", [Param("flashradius", HWORD)]),
    Command("lighten", [Param("flashradius", HWORD)]),
    Command("preparemsg2", [Param("str", STRING)]),

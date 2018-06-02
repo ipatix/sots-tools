@@ -30,7 +30,7 @@ def export_tileset(rom, proj: project.Project, offset, symbol, gfx_symbol, expor
     block_data = rom.pointer(offset + 12)
     anim_init = rom.u32(offset + 16)
     behaviour_offset = rom.pointer(offset + 20)
-
+    
     t = pymap.tileset.Tileset(is_primary)
     if forced_block_size:
         t.blocks = [[0] * 8 for i in range(forced_block_size)]
@@ -54,6 +54,12 @@ def export_tileset(rom, proj: project.Project, offset, symbol, gfx_symbol, expor
         t.behaviours[i] = list(map(hex, [_bitfield(value, 0, 9), _bitfield(value, 9, 14), _bitfield(value, 14, 18),
                             _bitfield(value, 18, 24), _bitfield(value, 24, 27), _bitfield(value, 27, 29),
                             _bitfield(value, 29, 31), _bitfield(value, 31, 32)]))
+
+        """
+        #This exportation is only relevant for violet as the fourth bitfield (18:24) will be exported from (16:24) (battle bg)
+        t.behaviours[i] = list(map(hex, [_bitfield(value, 0, 9), _bitfield(value, 9, 14), _bitfield(value, 14, 16),
+                            _bitfield(value, 16, 24), _bitfield(value, 24, 27), _bitfield(value, 27, 29),
+                            _bitfield(value, 29, 31), _bitfield(value, 31, 32)]))"""
 
     t.symbol = symbol
     if delete_anim_edit:

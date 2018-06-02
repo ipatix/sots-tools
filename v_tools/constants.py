@@ -2100,10 +2100,19 @@ behaviours = [
 ]
 
 map_namespaces = {
-    88: 'MAP_AMONIA',
-    89: 'MAP_MERIANA_CITY',
-    90: 'MAP_AKTANIA',
-    91: 'MAP_SILVANIA'
+    88: 'MAP_HESPERIA',
+    89: 'MAP_CARUN_CITY',
+    90: 'MAP_UNUMA',
+    91: 'MAP_URBANIA_CITY',
+	92: 'MAP_ROUTE_1',
+	93: 'MAP_ROUTE_2',
+	94: 'MAP_ROUTE_3',
+	95: 'MAP_ROUTE_4',
+	96: 'MAP_ROUTE_5',
+	97: 'MAP_WALD_VON_YELNIA',
+	98: 'MAP_TEAM_TUNDRA_HQ',
+	99: 'MAP_BAUM_DES_LEBENS',
+	100: 'MAP_HOEHLE_DER_WEACHTER'
 }
 
 map_show_name = {
