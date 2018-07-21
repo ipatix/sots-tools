@@ -22,6 +22,6 @@ else ifeq ($(shell uname -o),Cygwin)
 	cp wav2agb/wav2agb.exe /usr/local/bin
 	cp midi2agb/midi2agb.exe /usr/local/bin
 else
-	$(error "Unsupported platform: $(sheel uname -o)")
+	$(error "Unsupported platform: $(shell uname -o)")
 endif
 	@printf "[\e[1;32mInstallation Succeeded\e[0m]\n"
