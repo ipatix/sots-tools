@@ -292,16 +292,16 @@ class Pymap_gui(tkinter.Frame):
                 event_present = True
                 self.event_edit_widget_id_spinbox = tkinterx.Spinbox(self.event_edit_widget, from_=0, to=len(self.map.persons) - 1, default=id, command=lambda: self._select_event(self.event_type, int(self.event_edit_widget_id_spinbox.get())))
                 entries = _build_entries(["Id"], 4)
-                entries += _build_entries(["Picture"], 5, change_sensitive=True)
-                entries += _build_entries(["Field2", "Field3", "Level"], 6)
+                entries += _build_entries(["Bild"], 5, change_sensitive=True)
+                entries += _build_entries(["Field2", "Bild Table", "Ebene"], 6)
                 #Behaviour is a combo box and thus different
-                cbox_behaviour = tkinterx.LabeledCombobox(self.event_edit_widget, text="Behaviour", values=constants.values(constants.behaviours))
-                self.__setattr__("event_edit_widget_" + "Behaviour".lower(), cbox_behaviour)
+                cbox_behaviour = tkinterx.LabeledCombobox(self.event_edit_widget, text="Bewegung", values=constants.values(constants.behaviours))
+                self.__setattr__("event_edit_widget_" + "Bewegung".lower(), cbox_behaviour)
                 cbox_behaviour.get_handle().grid(row=9, sticky=tkinter.NW)
                 #cbox_behaviour.bind("<FocusOut>", (lambda _: self._event_apply_changes(self.event_type, self.event_id, supress_warnings=True)))
                 entries.append(cbox_behaviour)
                 self.event_edit_widgets.append(cbox_behaviour)
-                entries += _build_entries(["Behaviour range", "FieldB", "Is Trainer", "Padding", "FieldD", "Alert range", "Script", "Flag", "Field16", "Field17"], 10)
+                entries += _build_entries(["Bewegungsgrenze", "FieldB", "Trainer", "Padding", "FieldD", "Sichtweite", "Script", "Flag", "Field16", "Field17"], 10)
             
                
         elif self.event_type == "Warp": #Build widgets for warp
@@ -309,25 +309,25 @@ class Pymap_gui(tkinter.Frame):
             else:
                 event_present = True
                 self.event_edit_widget_id_spinbox = tkinterx.Spinbox(self.event_edit_widget, from_=0, to=len(self.map.warps) - 1, default=id, command=lambda: self._select_event(self.event_type, int(self.event_edit_widget_id_spinbox.get())))
-                entries = _build_entries(["Level", "Warp", "Bank", "Map"], 4)
+                entries = _build_entries(["Ebene", "Warp", "Bank", "Map"], 4)
         elif self.event_type == "Trigger": #Build widgets for trigger
             if len(self.map.triggers) <= id: event_present = event_present = False
             else:
                 event_present = True
                 self.event_edit_widget_id_spinbox = tkinterx.Spinbox(self.event_edit_widget, from_=0, to=len(self.map.triggers) - 1, default=id, command=lambda: self._select_event(self.event_type, int(self.event_edit_widget_id_spinbox.get())))
-                entries = _build_entries(["Level", "Field5", "Variable", "Value", "FieldA", "FieldB", "Script"], 4)
+                entries = _build_entries(["Ebene", "Field5", "Variable", "Value", "FieldA", "FieldB", "Script"], 4)
         elif self.event_type == "SignScript": #Build widgets for sign (script structure)
             if len(self.map.signposts) <= id: event_present = False
             else:
                 event_present = True
                 self.event_edit_widget_id_spinbox = tkinterx.Spinbox(self.event_edit_widget, from_=0, to=len(self.map.signposts) - 1, default=id, command=lambda: self._select_event("Sign", int(self.event_edit_widget_id_spinbox.get())))
-                entries = _build_entries(["Level", "Type", "Field6", "Field7", "Script"], 4)
+                entries = _build_entries(["Ebene", "Type", "Field6", "Field7", "Script"], 4)
         elif self.event_type == "SignItem":
             if len(self.map.signposts) <= id: event_present = False
             else:
                 event_present = True
                 self.event_edit_widget_id_spinbox = tkinterx.Spinbox(self.event_edit_widget, from_=0, to=len(self.map.signposts) - 1, default=id, command=lambda: self._select_event("Sign", int(self.event_edit_widget_id_spinbox.get())))
-                entries = _build_entries(["Level", "Type", "Field6", "Field7", "Item", "Hidden Id", "Flags, Chunk, Count"], 4)
+                entries = _build_entries(["Ebene", "Type", "Field6", "Field7", "Item", "Hidden Id", "Anzahl"], 4)
         elif self.event_type == "None": return
         else: 
             raise Exception("Unkown event type selected: " + self.event_type)
@@ -427,41 +427,41 @@ class Pymap_gui(tkinter.Frame):
                 except: widget.set(str(attribute), untraced=True)
         if stype == "Person":
             event = self.map.persons[id]
-            _load_entires(self.map.persons[id], {"Id" : "target_index", "Picture" : "picture", "Field2": "field_2", "Field3" : "field_3", "X" : "x", "Y" : "y", "Level" : "level", "Behaviour" : "behaviour", "Is Trainer" : "is_trainer",
-            "Padding" : "is_trainer_padding", "FieldD" : "field_d", "FieldB" : "field_b", "Alert range" : "alert_radius", "Script" : "script", "Flag" : "flag", "Field16" : "field_16", "Field17" : "field_17", "Behaviour range" : "behaviour_range"})
+            _load_entires(self.map.persons[id], {"Id" : "target_index", "Bild" : "picture", "Field2": "field_2", "Bild Table" : "field_3", "X" : "x", "Y" : "y", "Ebene" : "level", "Bewegung" : "behaviour", "Trainer" : "is_trainer",
+            "Padding" : "is_trainer_padding", "FieldD" : "field_d", "FieldB" : "field_b", "Sichtweite" : "alert_radius", "Script" : "script", "Flag" : "flag", "Field16" : "field_16", "Field17" : "field_17", "Bewegungsgrenze" : "behaviour_range"})
         elif stype == "Warp":
             event = self.map.warps[id]
-            _load_entires(self.map.warps[id], {"X" : "x", "Y" : "y", "Level" : "level", "Warp" : "target_warp", "Bank" : "target_bank", "Map" : "target_map"})
+            _load_entires(self.map.warps[id], {"X" : "x", "Y" : "y", "Ebene" : "level", "Warp" : "target_warp", "Bank" : "target_bank", "Map" : "target_map"})
         elif stype == "Trigger":
             event = self.map.triggers[id]
-            _load_entires(self.map.triggers[id], {"X" : "x", "Y" : "y", "Level" : "level", "Field5" : "field_5", "Variable" : "variable", "Value" : "value", "FieldA" : "field_a", "FieldB" : "field_b", "Script" : "script"})
+            _load_entires(self.map.triggers[id], {"X" : "x", "Y" : "y", "Ebene" : "level", "Field5" : "field_5", "Variable" : "variable", "Value" : "value", "FieldA" : "field_a", "FieldB" : "field_b", "Script" : "script"})
         elif stype == "SignScript":
             event = self.map.signposts[id]
-            _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Script" : "script"})
+            _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Ebene" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Script" : "script"})
         elif stype == "SignItem":
             event = self.map.signposts[id]
-            _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden Id" : "hidden", "Flags, Chunk, Count" : "count"})
+            _load_entires(self.map.signposts[id], {"X" : "x", "Y" : "y", "Ebene" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden Id" : "hidden", "Flags, Chunk, Count" : "count"})
         else: raise Exception("Unkown event type " + stype)
 
     def _event_apply_changes(self, stype, id, supress_warnings=False):
         """ Applies changes to the currently selected event by its id, specified type """
         if not self._can_draw(): return
         if stype == "Person":
-            assocs = {"Id" : "target_index", "Picture" : "picture", "Field2": "field_2", "Field3" : "field_3", "X" : "x", "Y" : "y", "Level" : "level", "Behaviour" : "behaviour", "Is Trainer" : "is_trainer",
-            "Padding" : "is_trainer_padding", "FieldD" : "field_d", "FieldB" : "field_b", "Alert range" : "alert_radius", "Script" : "script", "Flag" : "flag", "Field16" : "field_16", "Field17" : "field_17", "Behaviour range" : "behaviour_range"}
+            assocs = {"Id" : "target_index", "Bild" : "picture", "Field2": "field_2", "Bild Table" : "field_3", "X" : "x", "Y" : "y", "Ebene" : "level", "Bewegung" : "behaviour", "Trainer" : "is_trainer",
+            "Padding" : "is_trainer_padding", "FieldD" : "field_d", "FieldB" : "field_b", "Sichtweite" : "alert_radius", "Script" : "script", "Flag" : "flag", "Field16" : "field_16", "Field17" : "field_17", "Bewegungsgrenze" : "behaviour_range"}
             event = self.map.persons[id]
             #self._refresh_event_person_picture(id)
         elif stype == "Warp":
-            assocs = {"X" : "x", "Y" : "y", "Level" : "level", "Warp" : "target_warp", "Bank" : "target_bank", "Map" : "target_map"}
+            assocs = {"X" : "x", "Y" : "y", "Ebene" : "level", "Warp" : "target_warp", "Bank" : "target_bank", "Map" : "target_map"}
             event = self.map.warps[id]
         elif stype == "Trigger":
-            assocs = {"X" : "x", "Y" : "y", "Level" : "level", "Field5" : "field_5", "Variable" : "variable", "Value" : "value", "FieldA" : "field_a", "FieldB" : "field_b", "Script" : "script"}
+            assocs = {"X" : "x", "Y" : "y", "Ebene" : "level", "Field5" : "field_5", "Variable" : "variable", "Value" : "value", "FieldA" : "field_a", "FieldB" : "field_b", "Script" : "script"}
             event = self.map.triggers[id]
         elif stype == "SignScript":
-            assocs = {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Script" : "script"}
+            assocs = {"X" : "x", "Y" : "y", "Ebene" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Script" : "script"}
             event = self.map.signposts[id]
         elif stype == "SignItem":
-            assocs =  {"X" : "x", "Y" : "y", "Level" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden Id" : "hidden", "Flags, Chunk, Count" : "count"}
+            assocs =  {"X" : "x", "Y" : "y", "Ebene" : "level", "Type" : "sign_type", "Field6" : "field_6", "Field7" : "field_7", "Item" : "item_id", "Hidden Id" : "hidden", "Anzahl" : "count"}
             event = self.map.signposts[id]
         else: raise Exception("Unknown specified event type " + stype)
         diffs = {}
@@ -472,7 +472,7 @@ class Pymap_gui(tkinter.Frame):
             #Special types required for attributes X, Y, Picture
             try: new_value = int(widget.get(), 0)
             except Exception as e:
-                if entry_name in ("X", "Y", "Picture", "Type"): 
+                if entry_name in ("X", "Y"): 
                     if not supress_warnings: messagebox.showerror("Invalid property", "Required integer value for " + entry_name + " Exception: " + str(e))
                     return
             #event.__setattr__(assocs[entry_name], new_value)
