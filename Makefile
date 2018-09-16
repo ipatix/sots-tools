@@ -5,6 +5,7 @@ all: preproc wav2agb midi2agb
 
 git_update:
 	@printf "[\e[1;36mLoading Updates\e[0m]\n"
+	git pull
 	git submodule update --recursive --init
 
 preproc wav2agb midi2agb: git_update
