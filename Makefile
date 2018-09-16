@@ -13,7 +13,7 @@ preproc wav2agb midi2agb: git_update
 	make -C $@
 
 pyagb: git_update
-	cd pyagb && ./setup.py install
+	cd pyagb && chmod +x setup.py && ./setup.py install
 
 
 install: all
