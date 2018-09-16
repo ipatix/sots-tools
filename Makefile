@@ -1,6 +1,6 @@
-.PHONY: all preproc wav2agb midi2agb install git_update
+.PHONY: all preproc wav2agb midi2agb install git_update pyagb
 
-all: preproc wav2agb midi2agb
+all: preproc wav2agb midi2agb pyagb
 	@printf "[\e[1;32mBuilding Succeeded\e[0m]\n"
 
 git_update:
@@ -11,6 +11,9 @@ git_update:
 preproc wav2agb midi2agb: git_update
 	# tools to be built with regular makefiles
 	make -C $@
+
+pyagb: git_update
+	cd pyagb && ./setup.py install
 
 
 install: all
