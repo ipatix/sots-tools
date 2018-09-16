@@ -7,3 +7,6 @@
 [submodule "midi2agb"]
 	path = midi2agb
 	url = https://github.com/ipatix/midi2agb
+[submodule "pyagb"]
+	path = pyagb
+	url = https://github.com/SBird1337/pyagb
