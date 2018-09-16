@@ -32,7 +32,11 @@ music = {
 	501: "SEQ_BGM_INTRO",
 	504: "SEQ_BGM_EVENT_DEOXYS",
 	505: "SEQ_BGM_EVENT_TT_DANCE",
-	506: "SEQ_BGM_SURF", }
+	506: "SEQ_BGM_SURF", 
+	478: "SEQ_BGM_EYE_RIVF",
+	479: "SEQ_BGM_EYE_RIVM",
+	}
+
 
 map_namespaces = {
     88: 'MAP_HESPERIA',
@@ -79,10 +83,21 @@ sidequest_flag_table = {
 	0x700: "VERSTECKTES_ITEM_X", }
 
 story_flag_table = {
-	0x500 : "FLAG_HIDDENALL",						# Versteckt NPCs beim Gamestart. Diese Flags ist gesetzt!
+	0x500 : "FLAG_HIDDENALL",						# Versteckt NPCs beim Gamestart. #Diese Flags ist gesetzt!
 	0x501 : "FLAG_SCHOOL_MOVESPRITE",				# Schüler sind verstreut auf der Map, statt auf den Stühle.
 	0x502 : "FLAG_HIDE_RIVAL_SCHOOL",				# Versteckt den Rivalen in der Trainerschule.
 	0x503 : "FLAG_HIDE_RIVAL_SCHOOL_OUT",			# Versteckt den Rivalen am Eingang der Trainerschule.
+	0x504 : "FLAG_LABOR_MOVESPRITE1",				# Rivale und Achim stehen vor der Tür zum Hinterraum.
+	0x505 : "FLAG_HIDE_IDAN_LABOR",					# Versteckt Idan im Labor nach bedarf.
+	0x506 : "FLAG_HIDE_ACHIM_LABOR",				# Versteckt Achim im Labor nach bedarf. #Diese Flags ist gesetzt!
+	0x507 : "FLAG_HIDE_RIVALE_LABOR",				# Versteckt Rivalen im Labor nach bedarf.
+	0x508 : "FLAG_LABOR_MOVESPRITE2",				# Die Truppe ist im Labor, nach all dem Vorfall versammelt.
+	0x509 : "FLAG_HIDE_IDAN_HES_OD",				# Versteckt Idan in Hesperia
+	0x50a : "FLAG_HIDE_ACHIM_HES_OD",				# Versteckt Achim in Hesperia
+	0x59b : "FLAG_HIDE_TUNDRA_RUEPEL_HES"			# Versteckt den Tundra Rüpel, welcher den Wasserfall blockiert.
+	
+	
+	
 	}
 
 # ------------------------------------------------------------------------------------------------------------------------------------------
@@ -102,6 +117,56 @@ game_mod_var_table = {
 		0x2 : "MODI_SCHWER",
 	}
 	
+starter_pokemon_var_table ={
+		0x5052 : "VAR_STARTER_PLAYER_POKEMON",			# Spieler Starterpokemon
+			0x1 : "VALUE_STARTER_BISASAM",
+			0x2 : "VALUE_STARTER_GLUMANDA",
+			0x3 : "VALUE_STARTER_SCHIGGY",
+			0x4 : "VALUE_STARTER_ENDIVIE",
+			0x5 : "VALUE_STARTER_FEURIGEL",
+			0x6 : "VALUE_STARTER_KARNIMANI",
+			0x7 : "VALUE_STARTER_GECKARBOR",
+			0x8 : "VALUE_STARTER_FLEMMLI",
+			0x9 : "VALUE_STARTER_HYDROPI",
+			0xa : "VALUE_STARTER_CHELAST",
+			0xb : "VALUE_STARTER_PANFLAM",
+			0xc : "VALUE_STARTER_PLINFA",
+			0xd : "VALUE_STARTER_SERPIFEU",
+			0xe : "VALUE_STARTER_FLOINK",
+			0xf : "VALUE_STARTER_OTTARO",
+			0x10 : "VALUE_STARTER_IGAMARO",
+			0x11 : "VALUE_STARTER_FYNX",
+			0x12 : "VALUE_STARTER_FROXY",
+			0x13 : "VALUE_STARTER_BAUZ",
+			0x14 : "VALUE_STARTER_FLAMIAU",
+			0x15 : "VALUE_STARTER_ROBBALL",
+	}
+
+rivale_pokemon_var_table ={
+		0x5053 : "VAR_STARTER_RIVALE_POKEMON",			# Rivale Starterokemon
+			0x1 : "VALUE_STARTER_GLUMANDA",
+			0x2 : "VALUE_STARTER_SCHIGGY",
+			0x3 : "VALUE_STARTER_BISASAM",
+			0x4 : "VALUE_STARTER_FEURIGEL",
+			0x5 : "VALUE_STARTER_KRANIMANI",
+			0x6 : "VALUE_STARTER_ENDIVIE",
+			0x7 : "VALUE_STARTER_FLEMMLI",
+			0x8 : "VALUE_STARTER_HYDROPI",
+			0x9 : "VALUE_STARTER_GECKARBOR",
+			0xa : "VALUE_STARTER_PANFLAM",
+			0xb : "VALUE_STARTER_PLINFA",
+			0xc : "VALUE_STARTER_CHELAST",
+			0xd : "VALUE_STARTER_FLOINK",
+			0xe : "VALUE_STARTER_OTTARO",
+			0xf : "VALUE_STARTER_SERPIFEU",
+			0x10 : "VALUE_STARTER_FYNX",
+			0x11 : "VALUE_STARTER_FROXY",
+			0x12 : "VALUE_STARTER_IGAMARO",
+			0x13 : "VALUE_STARTER_FLAMIAU",
+			0x14 : "VALUE_STARTER_ROBBALL",
+			0x15 : "VALUE_STARTER_BAUZ",
+	}
+
 story_var_table = {
 	0x5051 : "VAR_STORYVERLAUF",						# Spielverlauf Variable, die Values bestimmen wo man ist.
 		0x0 : "VALUE_UNTERRICHT_SCHULE",				# Spielstart in der Trainerschule Senseis Unterricht.
@@ -112,8 +177,30 @@ story_var_table = {
 		0x5 : "VALUE_OHNE_POKE_LABOR",					# Man verlässt den hinterraum, ohne Pokémon.
 		0x6 : "VALUE_MIT_POKE_LABOR",					# Man kommt mit einem Pokémon vom Hinterraum.
 		0x7 : "VALUE_RIVALKAMPF_HESPERIAPFAD",			# Der erste Kampf gegen den Rivalen im Hesperiapfad.
+		0x8 : "VALUE_HESPERIA_BRUECKE",					# Das Gespräch vor der Brücke in Hesperia
+		0x9 : "VALUE_MAPSCRIPT_HESPERIAGRABEN",			# Das Levelscript in der Höhle von Hesperia
+		0xA : "VALUE_POKEMON_SPRING_HOEHLE",			# Ein wildees Pokémon zeigt die Sprungmöglichkeit im Hesperiagraben
+		0xB : "VALUE_VOR_DEM_REBERATUNNEL",				# Die Spieler stehen vor dem Reberatunnel
 	}	
-	
+
+save_var_table = {
+	0x5054 : "VAR_XPOS",								# Speichert die Position X vom Spieler
+	0x5055 : "VAR_YPOS",								# Speichert die Position Y vom Spieler
+	0x5056 : "VAR_LASTPLAYERFACE",						# Speichert den Blickfeld des Spielers
+	0x5057 : "VAR_LASTBANK",							# Speichert die Bank
+	0x5058 : "VAR_LASTMAP",								# Speichert die Map
+	0x5059 : "VAR_LASTWARP",							# Speichert das Warp
+}
+
+raetsel_var_table = {
+	0x505A : "VAR_HESGRABEN_SCHALTER_1",				# Schalter im Hesperiagraben 1
+	0x505B : "VAR_HESGRABEN_SCHALTER_2",				# Schalter im Hesperiagraben 2
+	0x505C : "VAR_HESGRABEN_SCHALTER_3",				# Schalter im Hesperiagraben 3
+	0x505D : "VAR_HESGRABEN_SCHALTER_4",				# Schalter im Hesperiagraben 4
+	0x505E : "VAR_HESGRABEN_SCHALTER_5",				# Schalter im Hesperiagraben 5
+	0x505F : "VAR_HESGRABEN_SCHALTER_6",				# Schalter im Hesperiagraben 6
+}
+
 # ------------------------------------------------------------------------------------------------------------------------------------------
 # Banks & Maps
 # ------------------------------------------------------------------------------------------------------------------------------------------
@@ -1037,6 +1124,22 @@ def story_var(id):
 	try: return story_var_table[id]
 	except: return hex(id)
 
+def raetsel_var(id):
+	try: return raetsel_var_table[id]
+	except: return hex(id)
+
+def save_var(id):
+	try: return save_var_table[id]
+	except: return hex(id)
+
+def starter_pokemon_var(id):
+	try: return starter_pokemon_var_table[id]
+	except: return hex(id)
+
+def rivale_pokemon_var(id):
+	try: return rivale_pokemon_var_table[id]
+	except: return hex(id)
+
 def npc1(id):
 	try: return npc_sprite_table1[id]
 	except: return hex(id)
@@ -1119,7 +1222,11 @@ def export_macros(lib, dir):
 		_export_generic_macros_from_dict(lib, dir, "story_flag", story_flag_table),
 		_export_generic_macros_from_dict(lib, dir, "important_var", important_var_table),
 		_export_generic_macros_from_dict(lib, dir, "game_mod_var", game_mod_var_table),
+		_export_generic_macros_from_dict(lib, dir, "starter_pokemon_var", starter_pokemon_var_table),
+		_export_generic_macros_from_dict(lib, dir, "rivale_pokemon_var", rivale_pokemon_var_table),
 		_export_generic_macros_from_dict(lib, dir, "story_var", story_var_table),
+		_export_generic_macros_from_dict(lib, dir, "save_var", save_var_table),
+		_export_generic_macros_from_dict(lib, dir, "raetsel_var", raetsel_var_table),
 		_export_generic_macros_from_dict(lib, dir, "npc1", npc_sprite_table1),
 		_export_generic_macros_from_dict(lib, dir, "npc2", npc_sprite_table2),
 		_export_generic_macros_from_dict(lib, dir, "npc3", npc_sprite_table3),
