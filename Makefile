@@ -1,4 +1,4 @@
-.PHONY: all preproc wav2agb midi2agb install git_update pyagb
+.PHONY: all preproc wav2agb midi2agb install git_update
 
 all: preproc wav2agb midi2agb pyagb
 	@printf "[\e[1;32mBuilding Succeeded\e[0m]\n"
@@ -8,15 +8,12 @@ git_update:
 	git pull
 	git submodule update --recursive --init
 
-preproc wav2agb midi2agb: git_update
+preproc wav2agb midi2agb:
 	# tools to be built with regular makefiles
 	make -C $@
 
-pyagb: git_update
-	cd pyagb && chmod +x setup.py && ./setup.py install
-
-
 install: all
+	cd pyagb && chmod +x setup.py && ./setup.py install
 ifeq ($(shell uname -o),GNU/Linux)
 	cp preproc/preproc /usr/local/bin
 	cp wav2agb/wav2agb /usr/local/bin
